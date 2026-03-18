@@ -1,0 +1,9 @@
+# PocketBase binary
+pocketbase
+
+# Data & uploads (database, logs, storage)
+pb_data/
+pb_public/
+
+# Environment
+.env
