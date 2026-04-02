@@ -24,7 +24,7 @@ export interface Project {
   brand: string;
   openingDate: string;
   status: ProjectStatus;
-  progress: number; // 0-100
+  progress: number;
   isLocked: boolean;
   created: string;
   updated: string;
@@ -37,7 +37,7 @@ export interface Task {
   name: string;
   startDate?: string;
   deadline?: string;
-  pic?: string; // Free text sesuai PRD
+  pic?: string;
   isCompleted: boolean;
   detail?: string;
   lastEditedBy?: string;
