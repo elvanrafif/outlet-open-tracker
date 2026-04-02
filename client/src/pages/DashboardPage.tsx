@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
-import { LogOut, Plus, MapPin, Loader2 } from "lucide-react";
+import { LogOut, Plus, MapPin, Loader2, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { pb } from "@/lib/pb";
 
@@ -12,6 +12,10 @@ interface PageContainerProps {
   children: React.ReactNode;
   onNewProject?: () => void;
 }
+
+import { NotificationBell } from "@/components/NotificationBell";
+
+// ... (kode sebelumnya)
 
 const PageContainer = ({ title, children, onNewProject }: PageContainerProps) => {
   const { logout, user } = useAuth();
@@ -24,13 +28,22 @@ const PageContainer = ({ title, children, onNewProject }: PageContainerProps) =>
           {user && <p className="text-sm text-muted-foreground">Logged in as: {user.name} ({user.role})</p>}
         </div>
         <div className="flex items-center gap-3">
+          <NotificationBell />
           {user?.role === 'superadmin' && (
-            <Button className="gap-2" onClick={onNewProject}>
-              <Plus className="h-4 w-4" />
-              New Project
-            </Button>
+            <>
+              <Link to="/users">
+                <Button variant="outline" className="gap-2">
+                  <Users className="h-4 w-4" />
+                  Manage Users
+                </Button>
+              </Link>
+              <Button className="gap-2" onClick={onNewProject}>
+                <Plus className="h-4 w-4" />
+                New Project
+              </Button>
+            </>
           )}
-          <Button variant="outline" size="sm" onClick={logout} className="gap-2">
+          <Button variant="outline" size="sm" onClick={logout} className="gap-2 text-destructive hover:bg-destructive/10">
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
