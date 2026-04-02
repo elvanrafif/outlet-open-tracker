@@ -43,4 +43,7 @@ export interface Task {
   detail?: string;
   lastEditedBy?: string;
   lastEditedAt?: string;
+  expand?: {
+    lastEditedBy?: User;
+  };
 }
