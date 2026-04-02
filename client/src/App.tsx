@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 
@@ -38,6 +39,11 @@ function App() {
             ? <UserManagementPage /> 
             : <Navigate to="/" replace />
         } 
+      />
+
+      <Route 
+        path="/settings" 
+        element={isAuthenticated ? <SettingsPage /> : <Navigate to="/login" replace />} 
       />
       
       <Route path="*" element={<Navigate to="/" replace />} />
