@@ -41,6 +41,10 @@ const PageContainer = ({ title, children, onNewProject }: PageContainerProps) =>
   );
 };
 
+import { DEFAULT_TASKS } from "@/lib/taskTemplates";
+
+// ... (kode sebelumnya)
+
 export const DashboardPage = () => {
   const { projects, loading, refresh } = useProjects();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,18 +62,48 @@ export const DashboardPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await pb.collection("projects").create({
+      // 1. Buat Project Baru
+      const project = await pb.collection("projects").create({
         ...formData,
         status: "on_track",
         progress: 0,
         isLocked: false,
       });
+
+      // 2. Ambil Semua Divisi untuk Map Nama ke ID
+      const divisions = await pb.collection("divisions").getFullList();
+      console.log('Available divisions in DB:', divisions.map(d => d.name));
+      
+      // 3. Generate 33 Task Otomatis
+      const taskPromises = DEFAULT_TASKS.map(taskTemplate => {
+        const division = divisions.find(d => d.name.trim().toLowerCase() === taskTemplate.division.trim().toLowerCase());
+        
+        if (!division) {
+          console.error(`Division not found: "${taskTemplate.division}". Make sure you added this to divisions collection!`);
+          return null;
+        }
+        
+        return pb.collection("tasks").create({
+          projectId: project.id,
+          divisionId: division.id,
+          name: taskTemplate.name,
+          isCompleted: false,
+        });
+      }).filter(Boolean);
+
+      if (taskPromises.length === 0) {
+        console.error('No tasks created. Check console errors above!');
+      }
+
+      await Promise.all(taskPromises);
+      console.log(`Successfully created project "${project.name}" with ${taskPromises.length} tasks.`);
+
       setIsModalOpen(false);
       setFormData({ name: "", address: "", type: "mall", brand: "", openingDate: "" });
       refresh();
     } catch (err) {
-      console.error("Error creating project:", err);
-      alert("Gagal membuat project baru.");
+      console.error("Error creating project and tasks:", err);
+      alert("Gagal membuat project atau task otomatis.");
     } finally {
       setIsSubmitting(false);
     }
