@@ -20,7 +20,7 @@ export interface Project {
   id: string;
   name: string;
   address: string;
-  type: 'Mall' | 'Stand Alone';
+  type: 'mall' | 'stand_alone';
   brand: string;
   openingDate: string;
   status: ProjectStatus;
@@ -29,6 +29,7 @@ export interface Project {
   created: string;
   updated: string;
 }
+
 
 export interface Task {
   id: string;
