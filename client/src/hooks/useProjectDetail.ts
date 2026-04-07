@@ -29,35 +29,44 @@ export const useProjectDetail = (projectId: string | undefined) => {
   });
 
   // Real-time: patch task in cache on subscribe event, then sync project progress
+  // Store returned unsubscribe fns so cleanup only removes THIS hook's listeners,
+  // not other hooks (e.g. useNotifications) that also subscribe to tasks '*'.
   useEffect(() => {
     if (!projectId) return;
     pb.autoCancellation(false);
 
-    pb.collection('tasks').subscribe(
-      '*',
-      (e) => {
-        if (e.record.projectId !== projectId) return;
-        queryClient.setQueryData(
-          queryKeys.projectTasks(projectId),
-          (prev: Task[] | undefined) =>
-            prev
-              ? prev.map((t) => (t.id === e.record.id ? (e.record as unknown as Task) : t))
-              : prev
-        );
-      },
-      { expand: 'lastEditedBy' }
-    );
+    let unsubTasks:   (() => void) | undefined;
+    let unsubProject: (() => void) | undefined;
 
-    pb.collection('projects').subscribe(projectId, (e) => {
-      queryClient.setQueryData(
-        queryKeys.project(projectId),
-        e.record as unknown as Project
-      );
-    });
+    pb.collection('tasks')
+      .subscribe(
+        '*',
+        (e) => {
+          if (e.record.projectId !== projectId) return;
+          queryClient.setQueryData(
+            queryKeys.projectTasks(projectId),
+            (prev: Task[] | undefined) =>
+              prev
+                ? prev.map((t) => (t.id === e.record.id ? (e.record as unknown as Task) : t))
+                : prev
+          );
+        },
+        { expand: 'lastEditedBy' }
+      )
+      .then((fn) => { unsubTasks = fn; });
+
+    pb.collection('projects')
+      .subscribe(projectId, (e) => {
+        queryClient.setQueryData(
+          queryKeys.project(projectId),
+          e.record as unknown as Project
+        );
+      })
+      .then((fn) => { unsubProject = fn; });
 
     return () => {
-      pb.collection('tasks').unsubscribe('*');
-      pb.collection('projects').unsubscribe(projectId);
+      unsubTasks?.();
+      unsubProject?.();
     };
   }, [projectId, queryClient]);
 

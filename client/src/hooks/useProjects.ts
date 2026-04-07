@@ -16,10 +16,13 @@ export const useProjects = () => {
   // Real-time: invalidate cache on any project change
   useEffect(() => {
     pb.autoCancellation(false);
-    pb.collection('projects').subscribe('*', () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects() });
-    });
-    return () => { pb.collection('projects').unsubscribe('*'); };
+    let unsub: (() => void) | undefined;
+    pb.collection('projects')
+      .subscribe('*', () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.projects() });
+      })
+      .then((fn) => { unsub = fn; });
+    return () => { unsub?.(); };
   }, [queryClient]);
 
   const createMutation = useMutation({

@@ -13,19 +13,24 @@ export const useNotifications = () => {
 
   const query = useQuery({
     queryKey: queryKeys.notifications(user?.id ?? ''),
-    queryFn: () => fetchNotifications(user!.id, user!.role, user?.divisionId),
+    queryFn: () => fetchNotifications(user!.role, user?.divisionId),
     enabled: !!user,
     refetchInterval: 5 * 60 * 1000, // re-scan every 5 minutes
   });
 
   // Real-time: re-scan when any task changes
+  // Store the returned unsubscribe fn so cleanup only removes THIS listener,
+  // not other hooks (e.g. useProjectDetail) that also subscribe to tasks '*'.
   useEffect(() => {
     if (!user) return;
     pb.autoCancellation(false);
-    pb.collection('tasks').subscribe('*', () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.notifications(user.id) });
-    });
-    return () => { pb.collection('tasks').unsubscribe('*'); };
+    let unsub: (() => void) | undefined;
+    pb.collection('tasks')
+      .subscribe('*', () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.notifications(user.id) });
+      })
+      .then((fn) => { unsub = fn; });
+    return () => { unsub?.(); };
   }, [user, queryClient]);
 
   return {

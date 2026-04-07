@@ -169,7 +169,6 @@ export type NotificationRaw = {
 };
 
 export const fetchNotifications = async (
-  userId: string,
   role: string,
   divisionId?: string
 ): Promise<NotificationRaw[]> => {
@@ -212,7 +211,5 @@ export const fetchNotifications = async (
     }
   });
 
-  // Suppress unused userId lint — it's passed for query key scoping per user
-  void userId;
   return result;
 };
