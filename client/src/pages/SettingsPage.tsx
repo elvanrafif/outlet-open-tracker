@@ -95,7 +95,7 @@ export const SettingsPage = () => {
               </div>
               <div className="space-y-1.5 opacity-50">
                 <label htmlFor="settings-email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Email (Read Only)</label>
-                <Input id="settings-email" value={user?.email} disabled className="bg-muted/10 border-dashed cursor-not-allowed" />
+                <Input id="settings-email" value={user?.email ?? ""} disabled className="bg-muted/10 border-dashed cursor-not-allowed" />
               </div>
               <div className="flex justify-end pt-1">
                 <Button size="sm" disabled={isSavingProfile} className="font-bold uppercase tracking-wider text-xs px-5 cursor-pointer">

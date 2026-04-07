@@ -156,17 +156,6 @@ export const createUser = (data: CreateUserInput): Promise<void> =>
 export const updateUser = (id: string, data: Record<string, unknown>): Promise<void> =>
   pb.collection('users').update(id, data);
 
-// ── Overdue task count (dashboard metric) ─────────────────────────────────────
-
-export const fetchOverdueTaskCount = async (): Promise<number> => {
-  const today = new Date().toISOString().split('T')[0];
-  const res = await pb.collection('tasks').getList(1, 1, {
-    filter: `isCompleted = false && deadline != "" && deadline < "${today}"`,
-    fields: 'id',
-  });
-  return res.totalItems;
-};
-
 // ── Notifications ─────────────────────────────────────────────────────────────
 
 export type NotificationRaw = {

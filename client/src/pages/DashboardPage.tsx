@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
   Plus, MapPin, Loader2,
@@ -14,9 +15,6 @@ import {
   Building2, Lock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchOverdueTaskCount } from "@/lib/api";
-import { queryKeys } from "@/lib/queryKeys";
 import type { Project } from "@/types/index";
 import type { CreateProjectInput } from "@/lib/api";
 import { useRelativeTime } from "@/hooks/useRelativeTime";
@@ -171,13 +169,9 @@ export const DashboardPage = () => {
 
   const isSuperadmin = user?.role === "superadmin";
 
-  // ── Summary metrics ──
-  const { data: overdueTaskCount = 0 } = useQuery({
-    queryKey: queryKeys.overdueTaskCount(),
-    queryFn: fetchOverdueTaskCount,
-    enabled: projects.length > 0,
-    refetchInterval: 60_000,
-  });
+  // ── Summary metrics — derive overdue count from cached notifications (zero extra requests) ──
+  const { notifications } = useNotifications();
+  const overdueTaskCount = notifications.filter((n) => n.type === "overdue").length;
 
   const activeProjects = projects.filter((p) => p.status !== "completed");
   const avgProgress = activeProjects.length > 0
