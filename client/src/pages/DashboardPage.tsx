@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { TYPE_CONFIG, progressBarColor } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,11 @@ import {
   Building2, Lock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { pb } from "@/lib/pb";
-import { DEFAULT_TASKS } from "@/lib/taskTemplates";
+import { useQuery } from "@tanstack/react-query";
+import { fetchOverdueTaskCount } from "@/lib/api";
+import { queryKeys } from "@/lib/queryKeys";
 import type { Project } from "@/types/index";
+import type { CreateProjectInput } from "@/lib/api";
 import { useRelativeTime } from "@/hooks/useRelativeTime";
 import { Layout } from "@/components/Layout";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -139,11 +141,10 @@ const ProjectTableRow = ({ project }: { project: Project }) => {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export const DashboardPage = () => {
-  const { projects, loading, refresh } = useProjects();
+  const { projects, loading, createProject, isCreating } = useProjects();
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalClosing, setIsModalClosing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const closeModal = () => {
     setIsModalClosing(true);
@@ -153,54 +154,30 @@ export const DashboardPage = () => {
     }, 250);
   };
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateProjectInput>({
     name: "", address: "", type: "mall", brand: "", openingDate: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     try {
-      const project = await pb.collection("projects").create({
-        ...formData, status: "on_track", progress: 0, isLocked: false,
-      });
-      const divisions = await pb.collection("divisions").getFullList();
-      const taskPromises = DEFAULT_TASKS.map((tmpl) => {
-        const div = divisions.find(
-          (d) => d.name.trim().toLowerCase() === tmpl.division.trim().toLowerCase()
-        );
-        if (!div) return null;
-        return pb.collection("tasks").create({
-          projectId: project.id, divisionId: div.id, name: tmpl.name, isCompleted: false,
-        });
-      }).filter(Boolean);
-      await Promise.all(taskPromises);
+      await createProject(formData);
       closeModal();
       setFormData({ name: "", address: "", type: "mall", brand: "", openingDate: "" });
-      refresh();
-    } catch (err) {
+    } catch {
       alert("Gagal membuat project.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const isSuperadmin = user?.role === "superadmin";
 
   // ── Summary metrics ──
-  const [overdueTaskCount, setOverdueTaskCount] = useState(0);
-
-  useEffect(() => {
-    if (projects.length === 0) return;
-    const today = new Date().toISOString().split("T")[0];
-    pb.collection("tasks")
-      .getList(1, 1, {
-        filter: `isCompleted = false && deadline != "" && deadline < "${today}"`,
-        fields: "id",
-      })
-      .then((r) => setOverdueTaskCount(r.totalItems))
-      .catch(() => {});
-  }, [projects]);
+  const { data: overdueTaskCount = 0 } = useQuery({
+    queryKey: queryKeys.overdueTaskCount(),
+    queryFn: fetchOverdueTaskCount,
+    enabled: projects.length > 0,
+    refetchInterval: 60_000,
+  });
 
   const activeProjects = projects.filter((p) => p.status !== "completed");
   const avgProgress = activeProjects.length > 0
@@ -484,7 +461,7 @@ export const DashboardPage = () => {
                   <label htmlFor="proj-type" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Site Type</label>
                   <select id="proj-type" className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer"
                     value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as 'mall' | 'stand_alone' })}>
                     <option value="mall">Mall</option>
                     <option value="stand_alone">Stand Alone</option>
                   </select>
@@ -507,8 +484,8 @@ export const DashboardPage = () => {
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <Button type="button" variant="ghost" onClick={closeModal} className="cursor-pointer font-bold uppercase tracking-wider text-xs">Cancel</Button>
-                <Button type="submit" disabled={isSubmitting} className="cursor-pointer px-6 font-bold uppercase tracking-wider text-xs shadow-md">
-                  {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating...</> : "Create Tracker"}
+                <Button type="submit" disabled={isCreating} className="cursor-pointer px-6 font-bold uppercase tracking-wider text-xs shadow-md">
+                  {isCreating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating...</> : "Create Tracker"}
                 </Button>
               </div>
             </form>

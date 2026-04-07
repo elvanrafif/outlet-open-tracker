@@ -94,7 +94,7 @@ export const ProjectDetailPage = () => {
       return;
     }
     const isChecking = !task.isCompleted;
-    await updateTask(task.id, {
+    await updateTask(task, {
       isCompleted: isChecking,
       lastEditedBy: isChecking ? user?.id : null,
       lastEditedAt: isChecking ? new Date().toISOString() : null,
