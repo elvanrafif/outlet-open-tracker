@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Layout } from "@/components/Layout";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getInitials } from "@/lib/constants";
 
 const AVATAR_COLORS = [
   "bg-blue-500/10    text-blue-600    dark:text-blue-400    border-blue-500/20",
@@ -17,9 +18,6 @@ const AVATAR_COLORS = [
   "bg-amber-500/10   text-amber-600   dark:text-amber-400   border-amber-500/20",
   "bg-rose-500/10    text-rose-600    dark:text-rose-400    border-rose-500/20",
 ];
-
-const getInitials = (name: string) =>
-  name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 
 export const UserManagementPage = () => {
   const { user: currentUser } = useAuth();
@@ -147,7 +145,7 @@ export const UserManagementPage = () => {
                   <button
                     onClick={() => { setSearchQuery(""); setDivisionFilter("all"); }}
                     className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5 transition-all cursor-pointer shrink-0"
-                    title="Reset Filters"
+                    aria-label="Clear all filters"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -183,7 +181,7 @@ export const UserManagementPage = () => {
                         </span>
                       )}
                     </div>
-                    <Button variant="ghost" size="icon" title="Reset Password"
+                    <Button variant="ghost" size="icon" aria-label="Reset password"
                       className="h-8 w-8 text-amber-600 hover:bg-amber-500/10 hover:text-amber-700 cursor-pointer rounded-lg"
                       onClick={() => handleResetPassword(u.id)}>
                       <Key className="h-3.5 w-3.5" />
@@ -235,7 +233,7 @@ export const UserManagementPage = () => {
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex justify-end">
-                          <Button variant="ghost" size="icon" title="Reset Password"
+                          <Button variant="ghost" size="icon" aria-label="Reset password"
                             className="h-8 w-8 text-amber-600 hover:bg-amber-500/10 hover:text-amber-700 cursor-pointer rounded-lg"
                             onClick={() => handleResetPassword(u.id)}>
                             <Key className="h-3.5 w-3.5" />
@@ -287,16 +285,16 @@ export const UserManagementPage = () => {
 
             <form onSubmit={handleCreateUser} className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Full Name</label>
-                <Input required value={formData.name}
+                <label htmlFor="add-user-name" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Full Name</label>
+                <Input id="add-user-name" required value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="John Doe"
                   className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Email Address</label>
-                <Input required type="email" value={formData.email}
+                <label htmlFor="add-user-email" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Email Address</label>
+                <Input id="add-user-email" required type="email" value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="john@example.com"
                   className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
@@ -304,8 +302,8 @@ export const UserManagementPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Access Role</label>
-                  <select className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer"
+                  <label htmlFor="add-user-role" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Access Role</label>
+                  <select id="add-user-role" className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
                     <option value="user">Staff User</option>
@@ -313,8 +311,9 @@ export const UserManagementPage = () => {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Division</label>
+                  <label htmlFor="add-user-division" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Division</label>
                   <select
+                    id="add-user-division"
                     required={formData.role === "user"} disabled={formData.role === "superadmin"}
                     className={cn(
                       "flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer",

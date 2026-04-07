@@ -11,7 +11,6 @@ export const useAuth = () => {
     try {
       const authData = await pb.collection('users').authWithPassword(email, password);
       
-      console.log('Auth data from PB:', authData.record);
 
       // Map PocketBase record ke interface User kita
       const userData: User = {
@@ -44,8 +43,6 @@ export const useAuth = () => {
     setIsValid(isAuth);
     if (isAuth && pb.authStore.model) {
       const model = pb.authStore.model;
-      console.log('Session model from PB:', model);
-      
       setUser({
         id: model.id,
         email: model.email,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { TYPE_CONFIG, progressBarColor } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -20,14 +21,6 @@ import { useRelativeTime } from "@/hooks/useRelativeTime";
 import { Layout } from "@/components/Layout";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const TYPE_CONFIG = {
-  mall:       { label: "Mall",       className: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
-  stand_alone: { label: "Stand Alone", className: "bg-teal-500/10   text-teal-600   dark:text-teal-400   border-teal-500/20"   },
-} as const;
-
-const progressBarColor = (pct: number) =>
-  pct >= 100 ? "bg-emerald-500" : pct >= 50 ? "bg-primary" : "bg-amber-500";
-
 // ─── Mobile project card ──────────────────────────────────────────────────────
 const ProjectCard = ({ project }: { project: Project }) => {
   const typeCfg = TYPE_CONFIG[project.type as keyof typeof TYPE_CONFIG];
@@ -39,7 +32,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
 
   return (
     <Link to={`/project/${project.id}`} className="block">
-      <div className="rounded-xl border border-border bg-card p-4 active:bg-muted/40 transition-colors shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-4 hover:bg-muted/20 active:bg-muted/40 transition-colors shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-bold text-foreground text-sm tracking-tight">{project.name}</p>
@@ -186,7 +179,6 @@ export const DashboardPage = () => {
       setFormData({ name: "", address: "", type: "mall", brand: "", openingDate: "" });
       refresh();
     } catch (err) {
-      console.error("Error creating project:", err);
       alert("Gagal membuat project.");
     } finally {
       setIsSubmitting(false);
@@ -392,7 +384,7 @@ export const DashboardPage = () => {
                   <button
                     onClick={clearFilters}
                     className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5 transition-all cursor-pointer shrink-0"
-                    title="Reset Filters"
+                    aria-label="Clear all filters"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -431,8 +423,8 @@ export const DashboardPage = () => {
               
               {filteredProjects.length === 0 && (
                 <div className="py-20 text-center rounded-xl border border-dashed border-border bg-muted/10">
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">No matching projects found</p>
-                  <Button variant="link" size="sm" onClick={clearFilters} className="mt-2 text-primary font-bold uppercase tracking-tight text-xs">Clear all filters</Button>
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">No Matching Projects Found</p>
+                  <Button variant="link" size="sm" onClick={clearFilters} className="mt-2 text-primary font-bold uppercase tracking-tight text-xs">Clear All Filters</Button>
                 </div>
               )}
             </div>
@@ -473,24 +465,24 @@ export const DashboardPage = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Outlet Name</label>
-                  <Input required value={formData.name}
+                  <label htmlFor="proj-name" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Outlet Name</label>
+                  <Input id="proj-name" required value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g., Outlet Sudirman" 
+                    placeholder="e.g., Outlet Sudirman"
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Location Address</label>
-                  <Input required value={formData.address}
+                  <label htmlFor="proj-address" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Location Address</label>
+                  <Input id="proj-address" required value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="Full street address" 
+                    placeholder="Full street address"
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Site Type</label>
-                  <select className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer" 
+                  <label htmlFor="proj-type" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Site Type</label>
+                  <select id="proj-type" className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer"
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
                     <option value="mall">Mall</option>
@@ -498,17 +490,17 @@ export const DashboardPage = () => {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Brand</label>
-                  <Input required value={formData.brand}
+                  <label htmlFor="proj-brand" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Brand</label>
+                  <Input id="proj-brand" required value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    placeholder="JCO / BreadTalk" 
+                    placeholder="JCO / BreadTalk"
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Target Opening Date</label>
-                  <Input required type="date" value={formData.openingDate}
-                    onChange={(e) => setFormData({ ...formData, openingDate: e.target.value })} 
+                  <label htmlFor="proj-date" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Target Opening Date</label>
+                  <Input id="proj-date" required type="date" value={formData.openingDate}
+                    onChange={(e) => setFormData({ ...formData, openingDate: e.target.value })}
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>

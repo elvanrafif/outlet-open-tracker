@@ -85,16 +85,17 @@ export const SettingsPage = () => {
             </div>
             <form onSubmit={handleUpdateProfile} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Display Name</label>
+                <label htmlFor="settings-name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Display Name</label>
                 <Input
+                  id="settings-name"
                   value={profileForm.name}
                   onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                   className="bg-muted/20 border-border/50 focus:bg-background transition-all"
                 />
               </div>
               <div className="space-y-1.5 opacity-50">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Email (Read Only)</label>
-                <Input value={user?.email} disabled className="bg-muted/10 border-dashed cursor-not-allowed" />
+                <label htmlFor="settings-email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Email (Read Only)</label>
+                <Input id="settings-email" value={user?.email} disabled className="bg-muted/10 border-dashed cursor-not-allowed" />
               </div>
               <div className="flex justify-end pt-1">
                 <Button size="sm" disabled={isSavingProfile} className="font-bold uppercase tracking-wider text-xs px-5 cursor-pointer">
@@ -115,8 +116,9 @@ export const SettingsPage = () => {
             </div>
             <form onSubmit={handleChangePassword} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Current Password</label>
+                <label htmlFor="settings-old-pw" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Current Password</label>
                 <Input
+                  id="settings-old-pw"
                   type="password" required
                   value={passwordForm.oldPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
@@ -124,8 +126,9 @@ export const SettingsPage = () => {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">New Password</label>
+                <label htmlFor="settings-new-pw" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">New Password</label>
                 <Input
+                  id="settings-new-pw"
                   type="password" required
                   value={passwordForm.newPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
@@ -133,8 +136,9 @@ export const SettingsPage = () => {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Confirm New Password</label>
+                <label htmlFor="settings-confirm-pw" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Confirm New Password</label>
                 <Input
+                  id="settings-confirm-pw"
                   type="password" required
                   value={passwordForm.confirmPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}

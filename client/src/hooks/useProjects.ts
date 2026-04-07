@@ -65,8 +65,7 @@ export const useProjects = () => {
     fetchProjects();
 
     // Subscribe ke perubahan data secara real-time!
-    pb.collection('projects').subscribe('*', function (e) {
-      console.log('Real-time project update:', e.action, e.record);
+    pb.collection('projects').subscribe('*', function () {
       fetchProjects(); // Refresh data saat ada perubahan
     });
 

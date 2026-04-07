@@ -14,11 +14,7 @@ import { useRelativeTime } from "@/hooks/useRelativeTime";
 import { Layout } from "@/components/Layout";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Input } from "@/components/ui/input";
-
-const TYPE_CONFIG = {
-  mall: { label: "Mall", className: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400" },
-  stand_alone: { label: "Stand Alone", className: "bg-teal-500/10 text-teal-600 border-teal-500/20 dark:text-teal-400" },
-};
+import { TYPE_CONFIG, progressBarColor } from "@/lib/constants";
 
 export const ProjectDetailPage = () => {
   const { id } = useParams();
@@ -200,11 +196,9 @@ export const ProjectDetailPage = () => {
                   <StatusBadge status={project.status} showDot={false} />
                   <span className="text-xs font-black tabular-nums text-foreground">{project.progress}%</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                   <div
-                    className={cn("h-full rounded-full transition-all duration-700",
-                      project.progress === 100 ? "bg-emerald-500" : project.progress >= 50 ? "bg-primary" : "bg-amber-500"
-                    )}
+                    className={cn("h-full rounded-full transition-all duration-700", progressBarColor(project.progress))}
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
@@ -401,22 +395,22 @@ export const ProjectDetailPage = () => {
             <form onSubmit={handleEditSubmit} className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Outlet Name</label>
-                  <Input required value={editForm.name}
+                  <label htmlFor="edit-name" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Outlet Name</label>
+                  <Input id="edit-name" required value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Location Address</label>
-                  <Input required value={editForm.address}
+                  <label htmlFor="edit-address" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Location Address</label>
+                  <Input id="edit-address" required value={editForm.address}
                     onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Site Type</label>
-                  <select className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer" 
+                  <label htmlFor="edit-type" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Site Type</label>
+                  <select id="edit-type" className="flex h-10 w-full rounded-lg border border-border/50 bg-muted/20 px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all cursor-pointer"
                     value={editForm.type}
                     onChange={(e) => setEditForm({ ...editForm, type: e.target.value as any })}>
                     <option value="mall">Mall</option>
@@ -424,16 +418,16 @@ export const ProjectDetailPage = () => {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Brand</label>
-                  <Input required value={editForm.brand}
+                  <label htmlFor="edit-brand" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Brand</label>
+                  <Input id="edit-brand" required value={editForm.brand}
                     onChange={(e) => setEditForm({ ...editForm, brand: e.target.value })}
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>
                 <div className="space-y-1.5 col-span-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Target Opening Date</label>
-                  <Input required type="date" value={editForm.openingDate}
-                    onChange={(e) => setEditForm({ ...editForm, openingDate: e.target.value })} 
+                  <label htmlFor="edit-date" className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">Target Opening Date</label>
+                  <Input id="edit-date" required type="date" value={editForm.openingDate}
+                    onChange={(e) => setEditForm({ ...editForm, openingDate: e.target.value })}
                     className="h-10 px-4 bg-muted/20 border-border/50 focus:bg-background transition-all"
                   />
                 </div>

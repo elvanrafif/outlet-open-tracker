@@ -13,15 +13,13 @@ import {
 } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import type { Division } from '@/types/index';
+import { getInitials } from '@/lib/constants';
 
 interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   actions?: React.ReactNode;
 }
-
-const getInitials = (name: string) =>
-  name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 
 export const Layout = ({ children, title, actions }: LayoutProps) => {
   const { user, logout } = useAuth();
@@ -152,8 +150,9 @@ export const Layout = ({ children, title, actions }: LayoutProps) => {
 
                       {/* Footer / Logout */}
                       <div className="p-2 border-t border-border bg-muted/10">
-                        <button 
+                        <button
                           onClick={handleLogout}
+                          aria-label="Logout"
                           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-destructive/70 hover:text-destructive hover:bg-destructive/5 transition-all group cursor-pointer"
                         >
                           <LogOut className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
