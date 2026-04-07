@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "design-guide": {
+      "source": "/Users/fadhel/Downloads/design-guide",
+      "sourceType": "local",
+      "computedHash": "c330b2aebb5d621825b56fa8d35c2880c645e6e116fe4fac0d89138f6aa96087"
+    }
+  }
+}

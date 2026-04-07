@@ -50,17 +50,20 @@ Sistem digital untuk menggantikan kertas manual "Pengajuan Deadline Opening Loka
 ### 🏠 Dashboard
 - Tabel list semua project yang sedang berjalan
 - Kolom: nama outlet, lokasi, target opening, progress bar, status
-- Status indikator:
-  - 🟢 **On Track**
-  - 🟡 **At Risk** — deadline < 7 hari
-  - 🔴 **Overdue**
+- **Status Indikator (Otomatis)**:
+  - 🔵 **Completed**: Otomatis jika progress **100%**.
+  - 🔴 **Overdue**: Otomatis jika ada **minimal 1 task** yang melewati deadline & belum selesai.
+  - 🟡 **At Risk**: Otomatis jika **Target Opening < 7 hari** (dan progress belum 100%).
+  - 🟢 **On Track**: Kondisi lainnya (semua aman).
 
 ### 📋 Project
 - Buat project baru (Superadmin)
 - Info: nama outlet, alamat, tipe (Mall / Stand Alone), brand, tanggal opening
 - Edit info project (Superadmin)
-- Tandai project "Selesai" → seluruh project terkunci
-- Buka kembali project terkunci (Superadmin only)
+- **Fitur Lock (Manual)**: 
+  - Superadmin dapat menandai project "Selesai" (Lock) → seluruh project terkunci (read-only).
+  - Berfungsi sebagai "Segel" data setelah audit/finalisasi.
+  - Buka kembali project terkunci (Superadmin only).
 - Arsip project selesai
 - Skala: maks ~10 project berjalan bersamaan
 
