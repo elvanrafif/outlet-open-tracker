@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   CheckCircle2, Circle, ChevronDown, ChevronUp,
   Calendar, Printer, FileSpreadsheet, Loader2, Pencil, Lock, MapPin, Store,
-  Info,
 } from "lucide-react";
 import { useProjectDetail } from "@/hooks/useProjectDetail";
 import { useAuth } from "@/hooks/useAuth";

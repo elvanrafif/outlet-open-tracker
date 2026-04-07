@@ -41,8 +41,8 @@ export interface Task {
   pic?: string;
   isCompleted: boolean;
   detail?: string;
-  lastEditedBy?: string;
-  lastEditedAt?: string;
+  lastEditedBy?: string | null;
+  lastEditedAt?: string | null;
   expand?: {
     lastEditedBy?: User;
   };
